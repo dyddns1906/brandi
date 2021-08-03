@@ -16,7 +16,6 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        super.prepareForReuse()
         imageView.image = nil
         imageView.hero.id = nil
     }

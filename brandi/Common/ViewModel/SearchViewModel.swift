@@ -17,7 +17,6 @@ class SearchViewModel: ViewModelType {
     struct Input {
         var keyword: BehaviorRelay<String>
         var fetchNextPage: PublishRelay<Bool>
-        var size: BehaviorRelay<Int>
     }
     struct Output {
         var sectionModel: BehaviorRelay<[SearchModel.SearchResultSectionModel]>
@@ -39,18 +38,18 @@ class SearchViewModel: ViewModelType {
     private let size = BehaviorRelay<Int>(value: 30)
     
     private let sectionModel = BehaviorRelay<[SearchModel.SearchResultSectionModel]>(value: [])
-    private let searchUrl = PublishSubject<String>()
     
     private let changeData = PublishSubject<SearchResult?>()
     private let addData = PublishSubject<SearchResult?>()
     
-    private let errorHandlr = PublishRelay<ErrorModel>()
-    
     private let isFetching = BehaviorRelay<Bool>(value: true)
     private let isLastData = BehaviorRelay<Bool>(value: false)
     
+    private let errorHandlr = PublishRelay<ErrorModel>()
+    
     init() {
-        input = Input(keyword: keyword, fetchNextPage: fetchNextPage, size: size)
+        input = Input(keyword: keyword,
+                      fetchNextPage: fetchNextPage)
         output = Output(sectionModel: sectionModel,
                         isFetching: isFetching)
         
@@ -59,7 +58,7 @@ class SearchViewModel: ViewModelType {
                 return self.search(keyword, page: self.page.value ?? 1, size: self.size.value)
             }
             .flatMap{ url in
-                return self.mappingResultData(url: url)
+                return self.requestMappingData(url: url)
             }
             .do(onNext: { _ in
                 self.page.accept(1)
@@ -82,7 +81,7 @@ class SearchViewModel: ViewModelType {
             }
             .distinctUntilChanged()
             .flatMap{ url in
-                return self.mappingResultData(url: url)
+                return self.requestMappingData(url: url)
             }
             .filterNil()
             .bind(to: addData)
@@ -126,7 +125,7 @@ class SearchViewModel: ViewModelType {
         .debug(keywrod)
     }
     
-    private func mappingResultData(url: String) -> Observable<SearchResult?> {
+    private func requestMappingData(url: String) -> Observable<SearchResult?> {
         return self.request(url)
             .map { result -> Data? in
                 switch result {
@@ -148,7 +147,7 @@ class SearchViewModel: ViewModelType {
                 if let result = result {
                     self.isLastData.accept(result.meta.is_end)
                 } else {
-                    self.isLastData.accept(false)
+                    self.isLastData.accept(true)
                 }
             })
     }

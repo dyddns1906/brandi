@@ -65,7 +65,7 @@ class ImageDetailViewController: UIViewController {
             .asDriver(onErrorJustReturn: nil)
             .filterNil()
             .drive(onNext: { result in
-                let placeHolder = UIImage(systemName: "photo.tv")?.alpha(0.1)
+                let placeHolder = UIImage(systemName: "photo.tv")
                 self.thumbImageView.kf.setImage(with: result.source, placeholder: placeHolder, options: self.imageOptions)
             })
             .disposed(by: disposeBag)
@@ -82,8 +82,9 @@ class ImageDetailViewController: UIViewController {
         bottomContainer.rx.tapGesture()
             .when(.recognized)
             .flatMap{ _ in
-                return self.viewModel.output.displaySiteName.filterEmpty()
+                return self.viewModel.output.displaySiteName
             }
+            .filterEmpty()
             .flatMap { _ in
                 return self.viewModel.output.sourceLink
             }

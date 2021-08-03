@@ -53,7 +53,7 @@ class ImageDetailViewModel: ViewModelType {
                         case .success(let value):
                             self.thumb.accept(value)
                         case .failure(let error):
-                            print(error)
+                            ErrorViewModel.shared.input.errorHandlr.accept(.extensionError(error))
                         }
                     }
                 }
@@ -64,7 +64,7 @@ class ImageDetailViewModel: ViewModelType {
                         case .success(let value):
                             self.imageOb.accept(value)
                         case .failure(let error):
-                            print(error)
+                            ErrorViewModel.shared.input.errorHandlr.accept(.extensionError(error))
                         }
                     }
                 }

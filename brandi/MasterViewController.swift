@@ -34,6 +34,8 @@ class MasterViewController: UIViewController {
         return indicator
     }()
     
+    let imageViewPlaceHolder = UIImage(systemName: "photo.tv")
+    
     private let resultEmptyView: UIView = {
         let view = UIView()
         let label = UILabel()
@@ -167,9 +169,10 @@ class MasterViewController: UIViewController {
     private func customCell(indexPath: IndexPath, data: DocumentData) -> UICollectionViewCell {
         let cell = resultCollectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.className, for: indexPath) as! SearchResultCollectionViewCell
         if let imageUrl = URL(string: data.thumbnail_url) {
-            let placeHolder = UIImage(systemName: "photo.tv")?.alpha(0.1)
-            cell.imageView.kf.setImage(with: imageUrl, placeholder: placeHolder)
+            cell.imageView.kf.setImage(with: imageUrl, placeholder: imageViewPlaceHolder)
             cell.hero.id = data.thumbnail_url
+        } else {
+            cell.imageView.image = imageViewPlaceHolder
         }
         return cell
     }
